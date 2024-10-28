@@ -58,7 +58,7 @@ exports.getAllIssuedBooks = async(req, res) => {
     //~ users is like an array and populate is like an append method that pushes the element into it
     
     //^ Data Transfer Object (DTO)
-    //..
+    const issuedBook = users.map((each) => new IssuedBook(each));
 
     if(issuedBooks.length === 0){
         return res.status(404).json({
@@ -71,6 +71,10 @@ exports.getAllIssuedBooks = async(req, res) => {
         message: "Users With The Issued Books..",
         data: issuedBooks,
     });
+}
+
+exports.addNewBook = async(req, res) => {
+    
 }
 
 // module.exports = {getAllBooks, getSingleBookById};

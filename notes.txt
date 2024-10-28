@@ -1,56 +1,3 @@
-A book record management API server/ Backend for the library system or management of record or manuals or books
-
-- Server use for:
-    >> storing certain book data
-    >> user registerations
-    >> subscriber
-
-(a fine system included)
-
-- Subcriptions (types):
-    > 3 month subcription (Basic)
-    > 6 month subcription (Standard)
-    > 12 month subcription (Premium)
-
-within subscription >> if we missed renewal >> 50/-
-subscription date is missed + renewal date missed >> [50 + 100]/- 
-
-missed by renewal date >> 50/-
-missed by subcription date >> 100/-
-missed by renewal + subcription date >> 150/-
-
-- Routes and endpoints:
-
-1. /users
-POST: create a new user 
-GET: to get all the information here
-
-2. /users/{id}
-GET: get a user by user id
-PUT: update a user by their id
-DELETE: delete a user by id (check if he/she have an issued book) & (check if there is any fine to be paid)
-
-3. /users/subcription-details/{id}
-GET: get user subscriber details
-    > date of subscription
-    > valid till
-    > is there any fine
-
-4. /books
-GET: get all the books
-POST: Add a new book
-
-5. /books/{id}
-GET: get a book by id
-PUT: update a book by id
-
-6. /books/issued
-GET: get all issued books
-
-7. /books/issued/withFine
-GET: get all issued books with their fine
-
-
 -npm init 
 -npm i nodemon --save-dev
 
@@ -82,3 +29,23 @@ C: Controllers (Brain or logical part of a route)
 
 -Foreign Key:
 Referential Integrity
+
+
+-DTO (Data Transfer Object):
+var obj1: {
+    name
+    age
+    id
+    gender
+}
+    ||
+    DTO (Transfer from one obj to another)
+    ||
+    \/
+
+var obj2: {
+    name
+    age
+    id
+    gender
+}
