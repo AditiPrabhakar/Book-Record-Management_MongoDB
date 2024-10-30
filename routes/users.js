@@ -8,6 +8,7 @@ const {
     deleteUser,
     updateUserData,
     createNewUser,
+    getSubscriptionDetailsById,
 } = require('../controllers/user-controller');
 
 const router = express.Router(); //~ for creating a modular set of routes to handle specific paths, which you can integrate into the main app using app.use()
@@ -74,68 +75,6 @@ router.post("/", createNewUser)
  * Parameters: ID
  */
 
- router.get('/subscription-details/:id', (req, res) => {
-    const {id} = req.params;
-    const user = users.find((each)=> each.id == id);
-
-    if(!user){
-        return res.status(400).json({
-            success: false,
-            message: "User With This ID Does Not Exist.",
-        });
-    }
-    const getDateInDays = (data = "")=>{
-        let date;
-        if(data === ""){ //* if we have no data then we'll assign it to today's date
-            data = new Date()
-        }else{
-            data = new Date(data) //* otherwise consider the date given in data
-        }
-
-        //~ The floor() function returns the largest integer that is smaller than or equal to the value passed as the argument (i.e.: rounds down the nearest integer).
-        //~ ceil() function in C++ returns the smallest integer that is greater than or equal to the value passed as the argument (i.e.: rounds up the nearest integer).
-        //^  Calculating days from date:
-        let days = Math.floor(data / (1000 * 60 * 60 * 24)) //2.7 of ceil is 3 and of floor is 2
-                            //milliseconds*seconds*minute*hours
-        return days;
-    };
-
-    const subscriptionType = (subscriptionDate) => {
-    if (user.subscriptionType === "Basic") {
-        return subscriptionDate + 90;
-    } else if (user.subscriptionType === "Standard") {
-        return subscriptionDate + 180;
-    } else if (user.subscriptionType === "Premium") {
-        return subscriptionDate + 365;
-    }
-};
-
-    // Jan 1 1970 UTC (Source from which we have to calculate.)
-    let returnDate = getDateInDays(user.returnDate);
-    let currentDate = getDateInDays();
-    let subscriptionDate = getDateInDays(user.subscriptionDate);
-    let subscriptionExpiration = subscriptionType(subscriptionDate);
-
-    const data = {
-        ...user,
-        isSubscriptionExpired: subscriptionExpiration <= currentDate,
-        daysLeftForExpiration: 
-            subscriptionExpiration <= currentDate
-            ? 0 
-            : (subscriptionExpiration - currentDate),
-        fine: 
-            returnDate < currentDate 
-            ? subscriptionExpiration <= currentDate
-              ? 100
-              : 50
-            : 0,
-    };
-
-    return res.status(200).json({
-        success: true,
-        message: "Subscription Details For The User Is: ",
-        data,
-    });
- })
+ router.get('/subscription-details/:id', getSubscriptionDetailsById);
 
  module.exports = router;
