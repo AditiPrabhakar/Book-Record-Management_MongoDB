@@ -74,8 +74,49 @@ exports.getAllIssuedBooks = async(req, res) => {
 }
 
 exports.addNewBook = async(req, res) => {
+    const { data } = req.body;
+
+    if(!data)
+    {
+        return res.status(200).json({
+            success: false,
+            message: "No Data To Add A Book"
+        })
+    }
     
+    await BookModel.create(data);
+    const allBooks = await BookModel.find()
+    
+    return res.status(201).json({
+        success: true,
+        message: "Book Added Successfully.",
+        data: allBooks,
+    })
+    //* Id's are auto-generated not manually entering, so we can skip checking this condition
+    // if(book)
+    // {
+    //     return res.status(404).json({
+    //         success: false,
+    //         message: "Book With This ID Already Exists.",
+    //     });
+    // }
 }
 
+exports.updateBookById = async(req, res) => {
+    const {id} = req.params;
+    const {data} = req.body;
+
+    const updatedBook = await BookModel.findOneAndUpdate({
+        _id: id,    //& if the auto-generated id is equal to the req.params id then
+    }, data, {      //& update the data
+        new: true,  //& and refresh it to latest data
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Book Updated",
+        data: updatedBook,
+    })
+}
 // module.exports = {getAllBooks, getSingleBookById};
 // can also export certain module as: exports.getAllBooks = () => {}

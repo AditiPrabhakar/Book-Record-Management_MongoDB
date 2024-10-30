@@ -2,6 +2,14 @@ const express = require("express");
 const { users } = require("../data/users.json");
 // const e = require("express");
 
+const {
+    getAllUsers,
+    getSingleUserById,
+    deleteUser,
+    updateUserData,
+    createNewUser,
+} = require('../controllers/user-controller');
+
 const router = express.Router(); //~ for creating a modular set of routes to handle specific paths, which you can integrate into the main app using app.use()
 
 //^ AFTER DATABASE CONNECTION (added models)
@@ -16,12 +24,7 @@ const {UserModel, BookModel} = require("../models/index");
  */
 // http://127.0.0.1:8081/users
 
-router.get("/", (req, res) => {
-    res.status(200).json({
-        success: true,
-        data: users
-    })
-})
+router.get("/", getAllUsers);
 
 /**
  *! Route: /:id
@@ -31,22 +34,7 @@ router.get("/", (req, res) => {
  * Parameters: Id
  */
 
-router.get('/:id', (req, res) => {
-    const {id} = req.params;
-    const user = users.find((each) => each.id === id);
-    if(!user)
-    {
-        return res.status(404).json({
-            success: false,
-            message: "User Doesn't Exist.",
-        });
-    }
-    return res.status(200).json({
-        success: true,
-        message: "User Found.",
-        data: user,
-    });
-})
+router.get('/:id', getSingleUserById);
 
 /**
  *! Route: /
@@ -56,33 +44,7 @@ router.get('/:id', (req, res) => {
  * Parameters: None
  */
 
-router.post("/", (req, res) => {
-    const {id, name, surname, email, subscriptionType, subscriptionDate} = req.body
-    const user = users.find((each) => each.id === id);
-
-    if(user)
-    {
-        res.status(404).json({
-            success: false,
-            message: "User With This ID Already Exists.",
-        });
-    }
-
-    users.push({
-        id,
-        name,
-        surname,
-        email,
-        subscriptionType,
-        subscriptionDate,
-    });
-
-    return res.status(201).json({
-        success: true,
-        message: "User Added Successfully",
-        data: users,
-    })
-})
+router.post("/", createNewUser)
 
 /**
  *! Route: /:id
@@ -92,35 +54,7 @@ router.post("/", (req, res) => {
  * Parameters: ID
  */
 
- router.put("/:id", (req, res) => {
-    const {id} = req.params;
-    const {data} = req.body;
-    const user = users.find((each) => each.id === id);
-
-    if(!user)
-    {
-        return res.status(404).json({
-            success: false,
-            message: "User Doesn't Exist.",
-        });
-    }
-    const updateUserData = users.map((each) => {
-        if(each.id === id)
-        {
-            return {
-                //* Can't write this vice-versa (each -> key, data -> value)
-                ...each, //each -> name, id, surname..etc
-                ...data, //spread operator as they will be updating just part of data
-            }
-        }
-        return each;
-    });
-    res.status(200).json({
-        success: true,
-        message: "User Updated",
-        data: updateUserData,
-    })
- })
+ router.put("/:id", updateUserData);
 
  /**
  *! Route: /:id
@@ -130,26 +64,7 @@ router.post("/", (req, res) => {
  * Parameters: ID
  */
 
- router.delete("/:id", (req, res) => {
-    const {id} = req.params;
-    const user = users.find((each) => each.id === id);
-
-    if(!user)
-    {
-        return res.status(404).json({
-            success: false,
-            message: "User Doesn't Exist.",
-        });
-    }
-    const index = users.indexOf(user);
-    users.splice(index, 1);
-
-    return res.status(200).json({
-        success: true,
-        message: "User Deleted.",
-        data: users,
-    })
- })
+ router.delete("/:id", deleteUser)
 
 /**
  *! Route: /subscription-details/:id

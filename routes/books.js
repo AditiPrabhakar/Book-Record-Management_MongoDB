@@ -3,6 +3,7 @@ const {getAllBooks,
     getSingleBookById, 
     getAllIssuedBooks,
     addNewBook,
+    updateBookById,
 } = require("../controllers/book-controller");
 const { books } = require("../data/books.json");
 const { users } = require("../data/users.json");
@@ -63,34 +64,6 @@ router.get('/issued', getAllIssuedBooks);
  * Data: id, name, genre, price, publisher
  */
 
- router.put("/:id", (req, res) => {
-    const {id} = req.params;
-    const {data} = req.body;
-    const book = books.find((each) => each.id === id);
-
-    if(!book)
-    {
-        return res.status(404).json({
-            success: false,
-            message: "Book With This ID Doesn't Exist.",
-        });
-    }
-    const updateBookData = books.map((each) => {
-        if(each.id === id)
-        {
-            return {
-                //* Can't write this vice-versa (each -> key, data -> value)
-                ...each, //each -> name, id, surname..etc
-                ...data, //spread operator as they will be updating just part of data
-            }
-        }
-        return each;
-    });
-    res.status(200).json({
-        success: true,
-        message: "Book Updated",
-        data: updateBookData,
-    })
- })
+ router.put("/:id", updateBookById);
 
 module.exports = router;
